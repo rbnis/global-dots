@@ -1,0 +1,3 @@
+#!/bin/bash
+
+curl -s api.flipdot.org | jq '.state.sensors.people_now_present[0]'
