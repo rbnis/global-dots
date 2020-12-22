@@ -1,0 +1,4 @@
+[include]
+	path = ~/.config/git/global.gitconfig
+	path = ~/.config/git/home.gitconfig
+	path = ~/.config/git/eoda.gitconfig

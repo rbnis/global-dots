@@ -1,0 +1,7 @@
+[user]
+	name = rbnis
+	email = 5955614+rbnis@users.noreply.github.com
+[includeIf "gitdir:~/code/aur/"]
+	path = ~/code/aur/.gitconfig
+[includeIf "gitdir:~/code/gitlab/"]
+	path = ~/code/gitlab/.gitconfig
