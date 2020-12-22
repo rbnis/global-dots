@@ -1,0 +1,17 @@
+Host aur.archlinux.org
+  IdentityFile ~/.ssh/aur
+  User aur
+
+Host ch-s012.rsync.net
+  IdentityFile ~/.ssh/ansible-ci
+
+Host ds-1.flipdot.org
+  User root
+
+Host fd-uberspace
+  HostName 95.143.172.245
+  User flipdot
+  ForwardAgent yes
+
+Host hass.home.rbn.is
+  User root
