@@ -98,7 +98,6 @@ source_shell_config() {
 }
 
 if [ ! "$1" == "--skip-install" ]; then
-  echo "skip"
   install_dependencies
 fi
 link_config_files
