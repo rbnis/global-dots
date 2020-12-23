@@ -40,7 +40,7 @@ install_dependencies() {
 
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     while true; do
-      read -rp "Install oh-my-zsh? [y/n]: " yn < /dev/ttyb
+      read -rp "Install oh-my-zsh? [y/n]: " yn < /dev/tty
       case $yn in
         [Yy]*) /bin/sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && break ;;
         [Nn]*) break ;;
