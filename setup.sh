@@ -2,7 +2,7 @@
 
 install_dependencies() {
   # Supported packetmanagers are apt and brew (on mac)
-  dependencies_linux_apt=("httpie" "tldr" "vim" "xclip")
+  dependencies_linux_apt=("curl" "httpie" "tldr" "vim" "xclip")
   dependencies_darvin_brew=("coreutils" "gnu-sed" "httpie" "iterm2" "secretive" "tldr" "vim")
 
   if [ ! -f "$(which zsh)" ]; then
@@ -35,6 +35,16 @@ install_dependencies() {
     for package in "${dependencies_darvin_brew[@]}"
     do
       brew install "$package"
+    done
+  fi
+
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    while true; do
+      read -rp "Install oh-my-zsh? [y/n]: " yn < /dev/ttyb
+      case $yn in
+        [Yy]*) /bin/sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && break ;;
+        [Nn]*) break ;;
+      esac
     done
   fi
 
@@ -96,23 +106,29 @@ link_config_files() {
       done
     fi
   done
+
+  # Link zsh themes
+  find "$HOME/.config/zsh/themes" \
+    -name '*.zsh-theme' \
+    -not -path './*.DS_Store' \
+    -not -type d -print0 | while read -rd $'\0' file
+  do
+    if [ -d "$HOME/.oh-my-zsh" ]; then
+      if [ ! -d "$HOME/.oh-my-zsh/custom/themes" ]; then
+        mkdir -p "$HOME/.oh-my-zsh/custom/themes"
+      fi
+
+      ln -sf "$file" "$HOME/.oh-my-zsh/custom/themes/$(basename "$file")"
+    fi
+  done
 }
 
 source_shell_config() {
   if [ -f "$HOME/.bashrc" ]; then
     find . \( -path './.config/shell/*' -or -path './.config/bash/*' \) -and -not -type d -print0 | while read -rd $'\0' file
     do
-      if ! grep -q "source $HOME/${file:2}" "$HOME/.bashrc"; then
-        echo "source \$HOME/${file:2}" >> "$HOME/.bashrc"
-      fi
-    done
-  fi
-
-  if [ -f "$HOME/.zshrc" ]; then
-    find . \( -path './.config/shell/*' -or -path './.config/zsh/*' \) -and -not -type d -print0 | while read -rd $'\0' file
-    do
-      if ! grep -q "source \$HOME/${file:2}" "$HOME/.zshrc"; then
-        echo "source \$HOME/${file:2}" >> "$HOME/.zshrc"
+      if ! grep -q "source \"\$HOME/${file:2}\"" "$HOME/.bashrc"; then
+        echo "source \"\$HOME/${file:2}\"" >> "$HOME/.bashrc"
       fi
     done
   fi
