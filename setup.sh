@@ -5,6 +5,16 @@ install_dependencies() {
   dependencies_linux_apt=("httpie" "tldr" "vim" "xclip")
   dependencies_darvin_brew=("coreutils" "gnu-sed" "httpie" "iterm2" "secretive" "tldr" "vim")
 
+  if [ ! -f "$(which zsh)" ]; then
+    while true; do
+      read -rp "Also install zsh? [y/n]: " yn < /dev/tty
+      case $yn in
+        [Yy]*) dependencies_linux_apt+=("zsh") && dependencies_darvin_brew+=("zsh") && break ;;
+        [Nn]*) break ;;
+      esac
+    done
+  fi
+
   if [ "$(uname)" == "Linux" ]; then
     # Linux
     if [ -f /etc/os-release ]; then
@@ -25,6 +35,16 @@ install_dependencies() {
     for package in "${dependencies_darvin_brew[@]}"
     do
       brew install "$package"
+    done
+  fi
+
+  if [ ! "$SHELL" == "$(which zsh)" ]; then
+    while true; do
+      read -rp "Change default shell to zsh? [y/n]: " yn < /dev/tty
+      case $yn in
+        [Yy]*) chsh -s "$(which zsh)" && break ;;
+        [Nn]*) break ;;
+      esac
     done
   fi
 }
