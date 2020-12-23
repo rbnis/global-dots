@@ -59,6 +59,7 @@ link_config_files() {
     -not -path './.editorconfig' -and \
     -not -path './*.gitignore' -and \
     -not -path './.git/*' -and \
+    -not -path './*.DS_Store' \
     -not -type d -print0 | while read -rd $'\0' file
   do
     # Check if the target file ist already present.
