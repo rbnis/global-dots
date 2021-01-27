@@ -1,0 +1,125 @@
+#!/bin/bash
+
+# Prerequisits:
+# jq
+
+api_key="$OMDB_API_KEY"
+metafile_name="info.txt"
+
+title_sanitize () {
+	title=$1
+
+	# Strip trailing date
+	if [[ $title =~ (^.*)\([0-9]{4}\).?$ ]]; then
+		title="${BASH_REMATCH[1]}"
+	fi
+
+	# Strip leading and trailing whitespace
+	title=$(echo "$title" | xargs)
+
+	echo "$title"
+}
+
+title_curlify () {
+	title=$1
+
+	# Replace whitespace with "+"
+	title=${title//[ ]/+}
+
+	echo "$title"
+}
+
+api_get_info () {
+	title=$1
+	title_curlified=$(title_curlify "$title")
+
+	result=$(curl -s -H "Accept: application/json" "https://www.omdbapi.com/?apikey=$api_key&t=$title_curlified")
+
+	echo "$result"
+}
+
+media_get_lang () {
+	if [[ -f $metafile_name ]]; then
+		lang=$(grep "lang" $metafile_name | head -1 | awk '{print $2}')
+
+		if [[ ${#lang} -gt 1 ]]; then
+			echo "$lang"
+		else
+			echo "unknown"
+		fi
+	else
+		echo "unknown"
+	fi
+}
+
+metafile_check () {
+	if [[ -f $metafile_name ]]; then
+		lang=$(grep "imdb" $metafile_name | head -1 | awk '{print $2}')
+
+		if [[ ${#lang} -gt 1 ]]; then
+			echo "True"
+		else
+			echo "False"
+		fi
+	else
+		echo "False"
+	fi
+}
+
+metafile_build () {
+	media_info_json=$1
+
+	media_info_lang="$(media_get_lang)"
+	media_info_title="$(echo "$media_info_json" | jq .Title)"
+	media_info_year="$(echo "$media_info_json" | jq .Year)"
+	media_info_genre="$(echo "$media_info_json" | jq .Genre)"
+	media_info_imdb="$(echo "$media_info_json" | jq .imdbID)"
+
+	metafile_content=$(cat <<-EOF
+		language: $media_info_lang
+		title: $media_info_title
+		year: $media_info_year
+		genre: $media_info_genre
+		imdb: $media_info_imdb
+		EOF
+  )
+
+  echo "$metafile_content"
+}
+
+### Main
+
+# Iterate all first level directories
+for d in */; do
+	title_dirty=$( echo "$d" | rev | cut -c 2- | rev)
+	(
+		cd "$title_dirty" || return
+
+		if [[ $(metafile_check) == "False" ]]; then
+			title=$(title_sanitize "$title_dirty")
+			media_info_json=$(api_get_info "$title")
+			media_info_json_response=$(echo "$media_info_json" | jq .Response | cut -c 2- | rev | cut -c 2- | rev)
+
+			if [[ $media_info_json_response == "True" ]]; then
+				metafile_content=$(metafile_build "$media_info_json")
+
+				echo "$metafile_content" > "$metafile_name"
+			else
+				pwd
+				echo "404 - Not Found: $title_dirty" >> ../error.log
+			fi
+		else
+			echo "100 - Metadata existent: $title_dirty" >> ../error.log
+		fi
+	)
+done
+
+###
+# language: eng
+# title: "2001: A Space Odyssey" (Title)
+# year: "1968" (Year)
+# genre: "Adventure, Sci-Fi" (Genre)
+# imdb: "tt0062622" (imdbID)
+###
+# posterurl: (Poster)
+###
