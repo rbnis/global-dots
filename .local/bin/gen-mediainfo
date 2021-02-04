@@ -54,9 +54,9 @@ media_get_lang () {
 
 metafile_check () {
 	if [[ -f $metafile_name ]]; then
-		lang=$(grep "imdb" $metafile_name | head -1 | awk '{print $2}')
+		genre=$(grep "genre" $metafile_name | head -1 | awk '{print $2}')
 
-		if [[ ${#lang} -gt 1 ]]; then
+		if [[ ${#genre} -gt 1 ]]; then
 			echo "True"
 		else
 			echo "False"
