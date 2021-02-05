@@ -68,5 +68,14 @@ zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 # Executed before each prompt.
 add-zsh-hook precmd vcs_info
 
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+  current_host="%m "
+else
+  case $(ps -o comm= -p $PPID) in
+    sshd|*/sshd) current_host="%m ";;
+  esac
+fi
+
+
 # Oxide prompt style.
-PROMPT=$'\n%(!.%{$oxide_red%}%n%{$oxide_reset_color%}.%{$oxide_limegreen%}%n%{$oxide_reset_color%}) %m%{$oxide_reset_color%} %{$oxide_limegreen%}%~%{$oxide_reset_color%} ${vcs_info_msg_0_}\n%(?.%{%F{white}%}.%{$oxide_red%})%(!.#.>)%{$oxide_reset_color%} '
+PROMPT=$'\n%(!.%{$oxide_red%}%n%{$oxide_reset_color%}.%{$oxide_turquoise%}%n%{$oxide_reset_color%}) %{$current_host%}%{$oxide_limegreen%}%~%{$oxide_reset_color%} ${vcs_info_msg_0_}\n%(?.%{%F{white}%}.%{$oxide_red%})>%{$oxide_reset_color%} '
