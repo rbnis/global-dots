@@ -1,3 +1,6 @@
+# Work related stuff
+micromata*
+
 # General
 .DS_Store
 .AppleDouble
@@ -24,6 +27,9 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# IntelliJ IDEA
+.idea/
 
 # Secrets
 secrets.conf
