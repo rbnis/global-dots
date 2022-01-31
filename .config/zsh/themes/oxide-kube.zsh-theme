@@ -70,11 +70,11 @@ zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
 # Executed before each prompt.
 add-zsh-hook precmd vcs_info
 
-user_info() {
+_user_info() {
     echo "%(!.%{$oxide_red%}%n%{$oxide_reset_color%}.%{$oxide_turquoise%}%n%{$oxide_reset_color%}) "
 }
 
-host_info() {
+_host_info() {
     prefix="on"
     if [ $(print -P "%y" | cut -c-3) = "pts" ]; then
         echo "$prefix %m "
@@ -82,8 +82,12 @@ host_info() {
 }
 
 # Gather kube infos
-kube_info() {
+_kube_info() {
     prefix="at"
+
+    if [[ ! -f "$HOME/.config/.kubeprompt" || $(head -n 1 "$HOME/.config/.kubeprompt") == 'off' ]]; then
+        return 0
+    fi
 
     if command -v kubectx &> /dev/null && command -v kubens &> /dev/null; then
         kube_current_context=$(kubectx -c)
@@ -97,10 +101,17 @@ kube_info() {
     fi
 }
 
-directory_info() {
+set_kube_prompt_on() {
+    echo "on" > "$HOME/.config/.kubeprompt"
+}
+set_kube_prompt_off() {
+    echo "off" > "$HOME/.config/.kubeprompt"
+}
+
+_directory_info() {
     prefix="in"
     echo "$prefix %{$oxide_limegreen%}%(5~|../%3~|%~)%{$oxide_reset_color%} "
 }
 
 # Oxide prompt style.
-PROMPT=$'\n%{$(user_info)%}%{$(host_info)%}%{$(kube_info)%}%{$(directory_info)%}${vcs_info_msg_0_}\n%(?.%{%F{white}%}.%{$oxide_red%})>%{$oxide_reset_color%} '
+PROMPT=$'\n%{$(_user_info)%}%{$(_host_info)%}%{$(_kube_info)%}%{$(_directory_info)%}${vcs_info_msg_0_}\n%(?.%{%F{white}%}.%{$oxide_red%})>%{$oxide_reset_color%} '
