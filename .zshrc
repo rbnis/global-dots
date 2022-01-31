@@ -12,6 +12,7 @@ source "$HOME/.config/shell/history.conf"
 source "$HOME/.config/shell/aliases.conf"
 source "$HOME/.config/shell/functions.conf"
 source "$HOME/.config/shell/exports.conf"
+source "$HOME/.config/shell/completions/flux.conf"
 if [[ -f "$HOME/.config/shell/secrets.conf" ]]; then
   source "$HOME/.config/shell/secrets.conf"
 fi
