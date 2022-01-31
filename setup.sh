@@ -2,8 +2,9 @@
 
 install_dependencies() {
   # Supported packetmanagers are apt and brew (on mac)
-  dependencies_linux_apt=("curl" "httpie" "tldr" "vim" "xclip")
-  dependencies_darvin_brew=("coreutils" "gnu-sed" "httpie" "iterm2" "kubectl" "secretive" "tldr" "vim")
+  dependencies_linux_apt=("curl" "httpie" "tldr" "neovim" "xclip")
+  dependencies_linux_pacman=("curl" "httpie" "tldr" "nvim" "xclip")
+  dependencies_darvin_brew=("coreutils" "gnu-sed" "httpie" "iterm2" "kubectl" "secretive" "tldr" "nvim")
 
   if [ ! -f "$(which zsh)" ]; then
     while true; do
@@ -23,6 +24,10 @@ install_dependencies() {
 
       if [ "$ID" == 'ubuntu' ] || [ "$ID" == 'debian' ] ; then
         sudo apt-get -y install "${dependencies_linux_apt[@]}"
+      elif [ "$ID" == 'arch' ] ; then
+        # sudo pacman -S
+        sudo pacman -S "${dependencies_linux_pacman[@]}"
+        echo noop
       fi
     fi
   elif [ "$(uname)" == "Darwin" ]; then
