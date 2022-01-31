@@ -4,7 +4,7 @@ install_dependencies() {
   # Supported packetmanagers are apt and brew (on mac)
   dependencies_linux_apt=("curl" "httpie" "tldr" "neovim" "xclip")
   dependencies_linux_pacman=("curl" "httpie" "tldr" "nvim" "xclip")
-  dependencies_darvin_brew=("coreutils" "gnu-sed" "httpie" "iterm2" "kubectl" "secretive" "tldr" "nvim")
+  dependencies_darvin_brew=("coreutils" "gnu-sed" "httpie" "iterm2" "kubectl" "kubectx" "secretive" "tealdear" "nvim")
 
   if [ ! -f "$(which zsh)" ]; then
     while true; do
